@@ -1,4 +1,3 @@
-
 export function createMarkupCard(ref, { hits }) {
   const markupCard = hits
     .map(
