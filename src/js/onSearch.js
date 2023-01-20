@@ -10,7 +10,7 @@ function onSearch(evt) {
     searchQuery = evt.currentTarget.elements.searchQuery.value;
 
     gallery.innerHTML = '';
-    axiosRequest()
+    axiosRequest(1)
         .then(data => {
         console.log(data);
 

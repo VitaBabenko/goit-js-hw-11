@@ -6,7 +6,7 @@ import { searchQuery } from './onSearch';
 let totalHits = 0;
 const per_page = 200;
 
-function axiosRequest(page = 1) {
+function axiosRequest(page) {
     const BASE_URL = 'https://pixabay.com/api/';
     const key = '17416890-a4cbe06baa9eb7d2b3a58d67d';
 
