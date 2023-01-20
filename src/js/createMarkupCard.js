@@ -1,14 +1,16 @@
-import { gallery } from './index';
 
-function createMarkupCard({ hits }) {
-    const markupCard = hits.map(({
+export function createMarkupCard(ref, { hits }) {
+  const markupCard = hits
+    .map(
+      ({
         webformatURL,
         largeImageURL,
         tags,
         likes,
         views,
         comments,
-        downloads }) =>
+        downloads,
+      }) =>
         `<a href="${largeImageURL}" class="link">
         <div class="photo-card">
         <img src="${webformatURL}" alt="${tags}" loading="lazy" width="300" height="200"/>
@@ -23,11 +25,9 @@ function createMarkupCard({ hits }) {
         <b>Downloads: ${downloads}</b></p>
         </div>
         </div>
-        </a>`).join('');
-    
-    gallery.insertAdjacentHTML('beforeend', markupCard);
+        </a>`
+    )
+    .join('');
+
+  ref.insertAdjacentHTML('beforeend', markupCard);
 }
-
-
-export { createMarkupCard };
-
