@@ -1,4 +1,4 @@
-export function createMarkupCard(ref, { hits }) {
+export function createMarkupCard(ref, { data: { hits } }) {
   const markupCard = hits
     .map(
       ({

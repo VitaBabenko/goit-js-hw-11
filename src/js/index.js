@@ -20,54 +20,59 @@ let lightbox = new SimpleLightbox('.gallery a', {
 form.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
-function onSearch(evt) {
-  evt.preventDefault();
-  const searchQuery = evt.currentTarget.elements.searchQuery.value;
-  page = 1;
-  gallery.innerHTML = '';
-  axiosRequest(searchQuery, page).then(data => {
-    if (searchQuery === '') {
+async function onSearch(evt) {
+  try {
+    evt.preventDefault();
+    loadMoreBtn.style.display = 'none';
+    const searchQuery = evt.currentTarget.elements.searchQuery.value;
+    page = 1;
+    renderedImages = 0;
+    gallery.innerHTML = '';
+    const response = await axiosRequest(searchQuery, page);
+    console.log(response)
+    if (searchQuery.trim() === '') {
       return (gallery.innerHTML = '');
     } else {
-      createMarkupCard(gallery, data);
-      renderedImages += data.hits.length;
+      createMarkupCard(gallery, response);
+      renderedImages += response.data.hits.length;
       loadMoreBtn.style.display = 'block';
       lightbox.refresh();
     }
-    if (renderedImages === data.totalHits || renderedImages > data.totalHits) {
+    if (renderedImages === response.data.totalHits || renderedImages > response.data.totalHits) {
       Notiflix.Notify.success(`This is last banch of images.`);
       loadMoreBtn.style.display = 'none';
       return;
     }
-    if (data.totalHits > 0) {
-      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    if (response.data.totalHits > 0) {
+      Notiflix.Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
     }
-  });
+  } catch (err) {
+    console.log(err)
+  } 
+  form.reset();
 }
 
-function onLoadMoreBtn() {
-  page += 1;
-  axiosRequest(form.elements.searchQuery.value, page)
-    .then(data => {
-      createMarkupCard(gallery, data);
-      renderedImages += data.hits.length;
-      if (
-        renderedImages === data.totalHits ||
-        renderedImages > data.totalHits
-      ) {
-        Notiflix.Notify.success(`This is last banch of images.`);
-        loadMoreBtn.style.display = 'none';
-        return;
-      }
-      const { height: cardHeight } = document
+async function onLoadMoreBtn() {
+  try {
+    page += 1;
+    const btnResponse = await axiosRequest(form.elements.searchQuery.value, page);
+    console.log(btnResponse)
+    createMarkupCard(gallery, btnResponse);
+    lightbox.refresh();
+    renderedImages += btnResponse.data.hits.length;
+    if (renderedImages > btnResponse.data.totalHits) {
+      Notiflix.Notify.success(`This is last banch of images.`);
+      loadMoreBtn.style.display = 'none';
+      return;
+    }
+    const { height: cardHeight } = document
         .querySelector('.gallery')
         .firstElementChild.getBoundingClientRect();
       window.scrollBy({
         top: cardHeight * 2,
         behavior: 'smooth',
       });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  } catch (err) {
+    console.log(err)
+  }
 }

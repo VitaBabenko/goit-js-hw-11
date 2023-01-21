@@ -3,25 +3,19 @@ import Notiflix from 'notiflix';
 
 const per_page = 40;
 
-function axiosRequest(query, page) {
-  const BASE_URL = 'https://pixabay.com/api/';
-  const key = '17416890-a4cbe06baa9eb7d2b3a58d67d';
+export async function axiosRequest(query, page) {
+    const BASE_URL = 'https://pixabay.com/api/';
+    const key = '17416890-a4cbe06baa9eb7d2b3a58d67d';
 
-  const data = axios
-    .get(
-      `${BASE_URL}?key=${key}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${per_page}`
-    )
-    .then(resp => {
-      if (resp.data.totalHits === 0) {
+    const response = await axios
+      .get(
+        `${BASE_URL}?key=${key}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${per_page}`
+      );
+      if (response.data.totalHits === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+        loadMoreBtn.style.display = 'none';
       }
-      return resp.data;
-    })
-    .catch(err => console.log(err));
-
-  return data;
+  return response;
 }
-
-export { axiosRequest, data, totalHits, per_page };
