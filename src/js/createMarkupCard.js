@@ -29,4 +29,4 @@ export function createMarkupCard(ref, { data: { hits } }) {
     .join('');
 
   ref.insertAdjacentHTML('beforeend', markupCard);
-}
+};

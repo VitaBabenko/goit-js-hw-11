@@ -10,6 +10,7 @@ const loadMoreBtn = document.querySelector('.load-more');
 
 let page = 1;
 let renderedImages = 0;
+let searchQuery = '';
 
 let lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
@@ -24,28 +25,28 @@ async function onSearch(evt) {
   try {
     evt.preventDefault();
     loadMoreBtn.style.display = 'none';
-    const searchQuery = evt.currentTarget.elements.searchQuery.value;
+    searchQuery = evt.currentTarget.elements.searchQuery.value;
     page = 1;
     renderedImages = 0;
     gallery.innerHTML = '';
-    const response = await axiosRequest(searchQuery, page);
-    console.log(response)
-    if (searchQuery.trim() === '') {
-      return (gallery.innerHTML = '');
-    } else {
-      createMarkupCard(gallery, response);
-      renderedImages += response.data.hits.length;
-      loadMoreBtn.style.display = 'block';
-      lightbox.refresh();
-    }
-    if (renderedImages === response.data.totalHits || renderedImages > response.data.totalHits) {
-      Notiflix.Notify.success(`This is last banch of images.`);
-      loadMoreBtn.style.display = 'none';
+    if (!searchQuery.trim()) {
+      alert('Заповніть, будь ласка, поле для пошуку!');
+      form.reset();
       return;
     }
-    if (response.data.totalHits > 0) {
+    if (searchQuery.trim()) {
+      const response = await axiosRequest(searchQuery, page);
+      if (response.data.totalHits > 0) {
       Notiflix.Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
     }
+      createMarkupCard(gallery, response);
+      renderedImages += response.data.hits.length;
+      
+      console.log(renderedImages)
+      console.log(response.data.hits.length)
+      loadMoreBtn.style.display = 'block';
+      lightbox.refresh();
+      }
   } catch (err) {
     console.log(err)
   } 
@@ -55,12 +56,17 @@ async function onSearch(evt) {
 async function onLoadMoreBtn() {
   try {
     page += 1;
-    const btnResponse = await axiosRequest(form.elements.searchQuery.value, page);
-    console.log(btnResponse)
-    createMarkupCard(gallery, btnResponse);
+    const response = await axiosRequest(searchQuery, page);
+    console.log(searchQuery)
+    
+    createMarkupCard(gallery, response);
+    console.log(response)
     lightbox.refresh();
-    renderedImages += btnResponse.data.hits.length;
-    if (renderedImages > btnResponse.data.totalHits) {
+    renderedImages += response.data.hits.length;
+    console.log(renderedImages)
+    console.log(response.data.hits.length)
+     console.log(response.data.totalHits)
+    if (renderedImages > response.data.totalHits || renderedImages === response.data.totalHits) {
       Notiflix.Notify.success(`This is last banch of images.`);
       loadMoreBtn.style.display = 'none';
       return;
