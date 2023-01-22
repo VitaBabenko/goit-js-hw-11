@@ -41,9 +41,6 @@ async function onSearch(evt) {
     }
       createMarkupCard(gallery, response);
       renderedImages += response.data.hits.length;
-      
-      console.log(renderedImages)
-      console.log(response.data.hits.length)
       loadMoreBtn.style.display = 'block';
       lightbox.refresh();
       }
@@ -57,15 +54,9 @@ async function onLoadMoreBtn() {
   try {
     page += 1;
     const response = await axiosRequest(searchQuery, page);
-    console.log(searchQuery)
-    
     createMarkupCard(gallery, response);
-    console.log(response)
     lightbox.refresh();
     renderedImages += response.data.hits.length;
-    console.log(renderedImages)
-    console.log(response.data.hits.length)
-     console.log(response.data.totalHits)
     if (renderedImages > response.data.totalHits || renderedImages === response.data.totalHits) {
       Notiflix.Notify.success(`This is last banch of images.`);
       loadMoreBtn.style.display = 'none';
